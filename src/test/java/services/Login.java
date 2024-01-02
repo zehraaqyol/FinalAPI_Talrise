@@ -7,6 +7,7 @@ import io.restassured.response.Response;
 import static org.hamcrest.Matchers.*;
 import org.junit.Assert;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -85,9 +86,19 @@ public class Login {
                 .body("data.firstName", equalTo("Lionel"),
                         "data.lastName",equalTo("Effertz"),
                         "data.roles[0]",equalTo("USER"));
+    }
 
+    public void loginNegatives(String emails,String passwords){
+        Map<String,Object> login = new HashMap<>();
+        login.put("email",emails);
+        login.put("password",passwords);
 
-
+        response=RestAssured.given().contentType(ContentType.JSON)
+                .body(login).log().all()
+                .post("auth/login").prettyPeek();
+    }
+    public void verifyNegativeTests(int expectedStatusCode){
+        Assert.assertEquals(expectedStatusCode,response.statusCode());
     }
 }
 
